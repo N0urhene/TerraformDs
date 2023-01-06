@@ -2,7 +2,6 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "=3.0.0"
     }
   }
 }
@@ -31,7 +30,7 @@ resource "azurerm_storage_account" "test" {
   name                     = "sttest1548hf8dd79"
   resource_group_name      = azurerm_resource_group.test.name
   location                 = azurerm_resource_group.test.location
-  account_tier             = "Standard"
+account_tier             = "Standard"
   account_replication_type = "LRS"
 
 }
@@ -65,7 +64,7 @@ resource "azurerm_subnet" "test3" {
 
 #création de la carte réseau test
 resource "azurerm_network_interface" "test" {
-  name                = "${var.name}-nic"
+  name                = "test-nic"
   location            = azurerm_resource_group.test.location
   resource_group_name = azurerm_resource_group.test.name
 
@@ -78,7 +77,7 @@ resource "azurerm_network_interface" "test" {
 }
 #création de la carte réseau test2
 resource "azurerm_network_interface" "test2" {
-  name                = "${var.name}-nic"
+  name                = "test2-nic"
   location            = azurerm_resource_group.test.location
   resource_group_name = azurerm_resource_group.test.name
 
@@ -91,7 +90,7 @@ resource "azurerm_network_interface" "test2" {
 }
 #création de la carte réseau test3
 resource "azurerm_network_interface" "test3" {
-  name                = "${var.name}-nic"
+  name                = "test3-nic"
   location            = azurerm_resource_group.test.location
   resource_group_name = azurerm_resource_group.test.name
 
@@ -129,11 +128,11 @@ resource "azurerm_virtual_machine" "test" {
   }
 
   storage_os_disk {
-    name              = "myosdisk3"
+    name              = "myosdisk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-    managed_disk_id   = azurerm_storage_container.test.id
+    vhd_uri       = "${azurerm_storage_account.test.primary_blob_endpoint}${azurerm_storage_container.test.name}/myosdisk.vhd"
+
   }
 
   storage_image_reference {
@@ -163,11 +162,11 @@ resource "azurerm_virtual_machine" "test2" {
   }
 
   storage_os_disk {
-    name              = "myosdisk3"
+    name              = "myosdisk2"
     caching           = "ReadWrite"
     create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-    managed_disk_id   = azurerm_storage_container.test.id
+    vhd_uri       = "${azurerm_storage_account.test.primary_blob_endpoint}${azurerm_storage_container.test.name}/myosdisk2.vhd"
+
   }
   storage_image_reference {
     publisher = "Canonical"
@@ -199,9 +198,9 @@ resource "azurerm_virtual_machine" "test3" {
     name              = "myosdisk3"
     caching           = "ReadWrite"
     create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-    managed_disk_id   = azurerm_storage_container.test.id
+    vhd_uri           = "${azurerm_storage_account.test.primary_blob_endpoint}${azurerm_storage_container.test.name}/myosdisk3.vhd"
   }
+  
   storage_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
